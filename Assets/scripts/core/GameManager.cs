@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour {
     private GUIStyle bannerStyle;
     private GUIStyle subBannerStyle;
     private GUIStyle infoStyle;
+    private GUIStyle centerHintStyle;
     private GUIStyle countdownStyle;
     private GUIStyle goalTipStyle;
     private GUIStyle gameOverTitleStyle;
@@ -114,6 +115,14 @@ public class GameManager : MonoBehaviour {
                 StartRaceWithSelectedCar(target);
                 return;
             }
+        }
+
+        // Check if returning directly to car selection
+        if (PlayerPrefs.GetInt("StartInCarSelection", 0) == 1) {
+            PlayerPrefs.DeleteKey("StartInCarSelection");
+            PlayerPrefs.Save();
+            ShowCarSelection();
+            return;
         }
 
         // Initialize Race State
@@ -531,6 +540,15 @@ public class GameManager : MonoBehaviour {
     public void ReturnToStartScreen() {
         Time.timeScale = 1f;
         PlayerPrefs.DeleteKey("QuickRestartCarName");
+        PlayerPrefs.DeleteKey("StartInCarSelection");
+        PlayerPrefs.Save();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void ReturnToCarSelection() {
+        Time.timeScale = 1f;
+        PlayerPrefs.DeleteKey("QuickRestartCarName");
+        PlayerPrefs.SetInt("StartInCarSelection", 1);
         PlayerPrefs.Save();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
@@ -603,6 +621,13 @@ public class GameManager : MonoBehaviour {
         };
         gameOverReasonStyle.normal.textColor = new Color(0.95f, 0.95f, 0.95f);
 
+        centerHintStyle = new GUIStyle(GUI.skin.label) {
+            fontSize = 14,
+            fontStyle = FontStyle.Normal,
+            alignment = TextAnchor.MiddleCenter
+        };
+        centerHintStyle.normal.textColor = new Color(0.85f, 0.85f, 0.85f);
+
         stylesInitialized = true;
     }
 
@@ -648,30 +673,47 @@ public class GameManager : MonoBehaviour {
 
         // 3. Center Finish Banner
         if (raceFinished) {
-            float bannerW = 520f;
-            float bannerH = 190f;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+
+            float bannerW = 560f;
+            float bannerH = 215f;
             float bannerX = (Screen.width - bannerW) * 0.5f;
             float bannerY = (Screen.height - bannerH) * 0.35f;
 
             GUI.Box(new Rect(bannerX, bannerY, bannerW, bannerH), GUIContent.none);
 
-            GUI.Label(new Rect(bannerX, bannerY + 15, bannerW, 40), "HOÀN THÀNH CUỘC ĐUA!", bannerStyle);
+            GUI.Label(new Rect(bannerX, bannerY + 15, bannerW, 40), "HOÀN THÀNH CHẶNG ĐUA!", bannerStyle);
             GUI.Label(new Rect(bannerX, bannerY + 60, bannerW, 30), $"THỜI GIAN HOÀN THÀNH: {FormatTime(finalTime)}", subBannerStyle);
-            GUI.Label(new Rect(bannerX, bannerY + 100, bannerW, 25), "Nhấn phím [ R ] để chơi lại", infoStyle);
+            GUI.Label(new Rect(bannerX, bannerY + 100, bannerW, 25), "Nhấn phím [ R ] để đua lại  •  [ ESC ] Về menu", centerHintStyle);
 
-            float bBtnW = 180f;
-            float bBtnH = 36f;
-            float bSpacing = 20f;
-            float bStartX = bannerX + (bannerW - (bBtnW * 2 + bSpacing)) * 0.5f;
-            float bBtnY = bannerY + 135f;
+            // 3 nút: Đua lại, Trở về menu, Đổi xe
+            float bBtnW = 160f;
+            float bBtnH = 44f;
+            float bSpacing = 15f;
+            float totalBtnsW = (bBtnW * 3) + (bSpacing * 2);
+            float bStartX = bannerX + (bannerW - totalBtnsW) * 0.5f;
+            float bBtnY = bannerY + 145f;
 
-            if (GUI.Button(new Rect(bStartX, bBtnY, bBtnW, bBtnH), "CHƠI LẠI (R)")) {
+            // Nút 1: Đua lại
+            GUI.backgroundColor = new Color(0.15f, 0.75f, 0.3f);
+            if (GUI.Button(new Rect(bStartX, bBtnY, bBtnW, bBtnH), "ĐUA LẠI (R)")) {
                 TryAgain();
             }
 
-            if (GUI.Button(new Rect(bStartX + bBtnW + bSpacing, bBtnY, bBtnW, bBtnH), "TRỞ VỀ BẮT ĐẦU")) {
+            // Nút 2: Trở về menu
+            GUI.backgroundColor = new Color(0.2f, 0.55f, 0.95f);
+            if (GUI.Button(new Rect(bStartX + bBtnW + bSpacing, bBtnY, bBtnW, bBtnH), "TRỞ VỀ MENU")) {
                 ReturnToStartScreen();
             }
+
+            // Nút 3: Đổi xe
+            GUI.backgroundColor = new Color(0.95f, 0.6f, 0.15f);
+            if (GUI.Button(new Rect(bStartX + (bBtnW + bSpacing) * 2, bBtnY, bBtnW, bBtnH), "ĐỔI XE")) {
+                ReturnToCarSelection();
+            }
+
+            GUI.backgroundColor = Color.white;
         }
 
         // 4. Center Game Over Banner
@@ -686,9 +728,9 @@ public class GameManager : MonoBehaviour {
 
             GUI.Box(new Rect(goX, goY, goW, goH), GUIContent.none);
 
-            GUI.Label(new Rect(goX, goY + 15, goW, 45), "💥 GAME OVER", gameOverTitleStyle);
+            GUI.Label(new Rect(goX, goY + 15, goW, 45), "GAME OVER", gameOverTitleStyle);
             GUI.Label(new Rect(goX, goY + 65, goW, 30), gameOverReason, gameOverReasonStyle);
-            GUI.Label(new Rect(goX, goY + 102, goW, 25), "Nhấn phím [ R ] để thử lại  •  [ ESC ] Về màn hình bắt đầu", infoStyle);
+            GUI.Label(new Rect(goX, goY + 102, goW, 25), "Nhấn phím [ R ] để thử lại  •  [ ESC ] Về màn hình bắt đầu", centerHintStyle);
 
             float bBtnW = 190f;
             float bBtnH = 42f;

@@ -28,7 +28,7 @@ public class CarStateMachine : MonoBehaviour {
     [HideInInspector] public WheelCollider[] wheelColliders;
     [HideInInspector] public Transform[] wheelTransforms;
     public ParticleSystem[] nitrus;
-    [HideInInspector] public new Rigidbody rigidbody;
+    [HideInInspector] public Rigidbody rigidbody;
     public Transform centerOfMassTransform;
 
     //camera

@@ -241,6 +241,7 @@ public class CarController : MonoBehaviour {
 
     #region gui
     [Header("gui")]
+    public bool showDebugGUI = false;
     public float GuiXPos = 0;
     public float GuiYPos = 0;
     public float GuiYSpace = 1;
@@ -249,7 +250,7 @@ public class CarController : MonoBehaviour {
     public float GuiCellHeight = 20;
 
     void OnGUI() {
-        if(!CompareTag("Player"))return;
+        if (!showDebugGUI || !CompareTag("Player")) return;
         float pos = GuiYPos;
         GUI.Label(new Rect(GuiXPos, pos, GuiCellWidth, GuiCellHeight), "KPH: " + stateMachine.KPH.ToString("0"), customStyle);
         pos += GuiYSpace;

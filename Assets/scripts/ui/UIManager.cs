@@ -266,9 +266,6 @@ public class UIManager : MonoBehaviour {
             case GameState.CarSelection:
                 DrawCarSelection();
                 break;
-            case GameState.RaceFinished:
-                DrawRaceFinishedMenuButtons();
-                break;
         }
     }
 
@@ -295,13 +292,13 @@ public class UIManager : MonoBehaviour {
 
         // Button 1: Start Race (Go to Car Selection)
         GUI.backgroundColor = new Color(0.1f, 0.85f, 0.35f); // Vivid Green
-        if (GUI.Button(new Rect(btnX, menuY + 150, btnW, btnH), "CHỌN XE VÀO ĐUA ➔", buttonPrimaryStyle)) {
+        if (GUI.Button(new Rect(btnX, menuY + 150, btnW, btnH), "CHỌN XE VÀO ĐUA", buttonPrimaryStyle)) {
             GameManager.Instance.ShowCarSelection();
         }
 
         // Button 2: Quick Race with Default Car
         GUI.backgroundColor = new Color(0.15f, 0.6f, 0.95f); // Electric Blue
-        if (GUI.Button(new Rect(btnX, menuY + 225, btnW, 46), "⚡ ĐUA NGAY (XE MẶC ĐỊNH)", buttonSecondaryStyle)) {
+        if (GUI.Button(new Rect(btnX, menuY + 225, btnW, 46), "ĐUA NGAY (XE MẶC ĐỊNH)", buttonSecondaryStyle)) {
             if (carList.Count > 0) {
                 GameManager.Instance.StartRaceWithSelectedCar(carList[0].carMachine);
             }
@@ -376,18 +373,18 @@ public class UIManager : MonoBehaviour {
 
         // Big Select & Race Button
         GUI.backgroundColor = new Color(0.1f, 0.85f, 0.35f);
-        if (GUI.Button(new Rect(actX, cardY + 95, actW, 70), "🏁 VÀO ĐUA!", buttonPrimaryStyle)) {
+        if (GUI.Button(new Rect(actX, cardY + 95, actW, 70), "VÀO ĐUA!", buttonPrimaryStyle)) {
             StartRaceWithCurrentCar();
         }
 
         // Back to Menu Button
         GUI.backgroundColor = new Color(0.4f, 0.45f, 0.55f);
-        if (GUI.Button(new Rect(actX, cardY + 180, actW, 45), "↩ QUAY LẠI", buttonSecondaryStyle)) {
+        if (GUI.Button(new Rect(actX, cardY + 180, actW, 45), "QUAY LẠI", buttonSecondaryStyle)) {
             GameManager.Instance.ShowMainMenu();
         }
 
         // Hotkey guidance hint
-        GUI.Label(new Rect(cardX + 30, cardY + 222, 420, 25), "💡 Phím tắt: [A]/[D] hoặc [◀]/[▶] chuyển xe  •  [ENTER] Vào đua  •  [ESC] Quay lại", descStyle);
+        GUI.Label(new Rect(cardX + 30, cardY + 222, 420, 25), "Phím tắt: [A]/[D] hoặc [◀]/[▶] chuyển xe  •  [ENTER] Vào đua  •  [ESC] Quay lại", descStyle);
 
         GUI.backgroundColor = Color.white;
     }
@@ -423,25 +420,5 @@ public class UIManager : MonoBehaviour {
             CarStateMachine selected = carList[currentCarIndex].carMachine;
             GameManager.Instance.StartRaceWithSelectedCar(selected);
         }
-    }
-
-    private void DrawRaceFinishedMenuButtons() {
-        float btnW = 220f;
-        float btnH = 40f;
-        float startX = (Screen.width - (btnW * 2 + 20)) * 0.5f;
-        float startY = (Screen.height * 0.35f) + 195f;
-
-        GUI.backgroundColor = new Color(0.15f, 0.7f, 0.3f);
-        if (GUI.Button(new Rect(startX, startY, btnW, btnH), "🔄 ĐUA LẠI", buttonSecondaryStyle)) {
-            GameManager.Instance.RestartRace();
-        }
-
-        GUI.backgroundColor = new Color(0.2f, 0.5f, 0.9f);
-        if (GUI.Button(new Rect(startX + btnW + 20, startY, btnW, btnH), "🚗 ĐỔI XE / MENU", buttonSecondaryStyle)) {
-            // Reload scene to restore all cars for menu selection
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-
-        GUI.backgroundColor = Color.white;
     }
 }

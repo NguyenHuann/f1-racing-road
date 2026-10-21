@@ -280,6 +280,7 @@ public class EngineController : MonoBehaviour {
 
     #region GUI
     [Header("GUI")]
+    public bool showDebugGUI = false;
     public float GuiXPos = 0;
     public float GuiYPos = 0;
     public float GuiYSpace = 20;
@@ -288,7 +289,7 @@ public class EngineController : MonoBehaviour {
     public float GuiCellHeight = 20;
 
     void OnGUI() {
-        if(!CompareTag("Player"))return;
+        if (!showDebugGUI || !CompareTag("Player")) return;
         float pos = GuiYPos;
         GUI.HorizontalSlider(new Rect(GuiXPos, pos, GuiCellWidth, GuiCellHeight), engineRPM, idleRPM, maxRPM);
         pos += GuiYSpace;

@@ -118,6 +118,7 @@ public class WheelsManager : MonoBehaviour {
 
     #region gui
      [Header("gui")]
+     public bool showDebugGUI = false;
      [HideInInspector] public float GuiXPos = 0;
      [HideInInspector] public float GuiYPos = 0;
      [HideInInspector] public float GuiYSpace = 1;
@@ -126,7 +127,7 @@ public class WheelsManager : MonoBehaviour {
      [HideInInspector] public float GuiCellHeight = 20;
 
     void OnGUI() {
-        return;
+        if (!showDebugGUI) return;
         float pos = GuiYPos;
 
         // forwardSlip
